@@ -1,5 +1,10 @@
 package truc.aws.testaws.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeId;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class Student {
     private Integer id;
     private String firstName;

@@ -1,11 +1,14 @@
 package truc.aws.testaws.controller;
 
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import truc.aws.testaws.service.S3Service;
 
 import java.io.IOException;
@@ -45,6 +48,23 @@ public class AmazonS3Controller {
                 .header("Content-type", "application/octet-stream")
                 .header("Content-disposition", "attachment; filename=\"" + keyName + "\"")
                 .body(resource);
+    }
+
+    @GetMapping(value = "/ahihi/{bucketName}/{keyName}", consumes = "application/octet-stream", produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+    public ResponseEntity<StreamingResponseBody> ahihi(@PathVariable("bucketName") String bucketName, @PathVariable("keyName") String keyName) throws Exception {
+        S3ObjectInputStream data = s3Service.getContent(bucketName, keyName);
+
+        final StreamingResponseBody body = outputStream -> {
+            int numberOfBytesToWrite = 0;
+            byte[] ahihi = new byte[1024];
+            while ((numberOfBytesToWrite = data.read(ahihi, 0, ahihi.length)) != -1) {
+                System.out.println("Writing some bytes..");
+                outputStream.write(ahihi, 0, numberOfBytesToWrite);
+            }
+            data.close();
+        };
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @DeleteMapping("/{bucketName}/files/{keyName}")

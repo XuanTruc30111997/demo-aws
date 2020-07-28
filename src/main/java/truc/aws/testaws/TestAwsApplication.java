@@ -3,8 +3,10 @@ package truc.aws.testaws;
 import com.amazonaws.services.s3.internal.SkipMd5CheckStrategy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
+@EnableEurekaClient
 public class TestAwsApplication {
 
 	public static void main(String[] args) {
